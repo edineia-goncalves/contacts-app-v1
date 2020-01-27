@@ -3,8 +3,7 @@
     <div class="md-layout md-gutter">
       <div class="md-layout-item md-size-10">
         <md-button class="md-raised md-primary" @click="showDialog = true">Adicionar contato</md-button>
-        <Dialog
-        :show-dialog="showDialog" @close="showDialog = false" @save="save"></Dialog:show-dialog="showDialog">
+        <Dialog :show-dialog="showDialog" @close="showDialog = false" @save="save"></Dialog>
       </div>
     </div>
     <md-table md-card>
