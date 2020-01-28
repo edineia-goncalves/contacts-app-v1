@@ -1,5 +1,13 @@
 <template>
-  <v-data-table height="430" :headers="header" :items="list" class="elevation-1 ml-5 mr-5 mt-5">
+  <v-data-table
+    item-key="nome"
+    loading="false"
+    loading-text="Carregando..."
+    height="430"
+    :headers="header"
+    :items="list"
+    class="elevation-1 ml-5 mr-5 mt-5"
+  >
     <template v-slot:item="props">
       <tr :class="getClass(props.item)">
         <td>{{ props.item.nome }}</td>
@@ -140,10 +148,12 @@ export default {
           this.titleDialog = "Editar contato";
           this.showDialog = true;
           const data = doc.exists && doc.data();
-          this.form = {
-            nome: data.nome,
-            telefoneCelular: data.telefoneCelular
-          };
+          if (data) {
+            this.form = {
+              nome: data.nome,
+              telefoneCelular: data.telefoneCelular
+            };
+          }
         })
         .catch(error => {
           this.showDialog = false;
