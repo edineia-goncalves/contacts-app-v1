@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import contacts from "./views/contacts/contacts";
+import contacts from "./views/contacts/data-table";
 
 export default {
   name: "App",
