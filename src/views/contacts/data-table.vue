@@ -18,7 +18,7 @@
         <v-toolbar-title>Contatos</v-toolbar-title>
       </v-toolbar>
       <v-spacer></v-spacer>
-      <v-dialog v-model="showDialog" max-width="500px">
+      <v-dialog v-model="showDialog" max-width="600px">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark class="mb-2" v-on="on">Novo contato</v-btn>
         </template>
@@ -30,7 +30,7 @@
             <v-container>
               <form>
                 <v-row>
-                  <v-col>
+                  <v-col cols="12">
                     <v-text-field v-model="form.nome" label="Nome completo" required></v-text-field>
                     <v-text-field
                       v-model="form.telefoneCelular"
