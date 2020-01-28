@@ -44,15 +44,19 @@
               <form>
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field v-model="form.nome" label="Nome completo" required></v-text-field>
                     <v-text-field
-                      v-model="form.telefoneCelular"
-                      label="Telefone celular"
+                      v-model="form.nome"
+                      label="Nome completo"
                       :rules="[
                         v =>
                           v.match('\\b\\w{1,2}\\b') ||
                           'Mínimo duas palavras de 3 letras cada'
                       ]"
+                      required
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="form.telefoneCelular"
+                      label="Telefone celular"
                       v-mask="'(##) #####-####'"
                     ></v-text-field>
                   </v-col>
@@ -111,15 +115,18 @@ export default {
           telefoneCelular: form.telefoneCelular
         })
         .then(() => {
-          (this.form = {
+          this.showDialog = false;
+          this.$toast.success("Salvo com sucesso!", {
+            position: "top-right"
+          });
+          this.form = {
             nome: null,
             telefoneCelular: null
-          }),
-            (this.showDialog = false);
+          };
         })
         .catch(error => {
-          // eslint-disable-next-line no-console
-          console.error("Error adding document: ", error);
+          this.$toast.error(error, { position: "top-right" }) ||
+            this.$toast.error("Erro ao salvar", { position: "top-right" });
         });
     },
     editItem() {},
@@ -129,12 +136,13 @@ export default {
         .doc(id)
         .delete()
         .then(() => {
-          // eslint-disable-next-line no-console
-          console.log("item removido", id);
+          this.$toast.success("Excluído com sucesso!", {
+            position: "top-right"
+          });
         })
         .catch(error => {
-          // eslint-disable-next-line no-console
-          console.error("Error removing document: ", error);
+          this.$toast.error(error, { position: "top-right" }) ||
+            this.$toast.error("Erro ao excluir", { position: "top-right" });
         });
     }
   }
