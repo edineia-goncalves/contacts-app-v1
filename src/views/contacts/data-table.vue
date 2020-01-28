@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="header" :items="list" class="elevation-1">
+  <v-data-table height="430" :headers="header" :items="list" class="elevation-1 ml-5 mr-5 mt-5">
     <template v-slot:item="props">
       <tr :class="getClass(props.item)">
         <td>{{ props.item.nome }}</td>
@@ -14,13 +14,26 @@
       </tr>
     </template>
     <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>Contatos</v-toolbar-title>
-      </v-toolbar>
-      <v-spacer></v-spacer>
+      <div>
+        <v-breadcrumbs
+          :items="[
+            {
+              text: 'Dashboard',
+              disabled: false,
+              href: 'contatos'
+            },
+            {
+              text: 'Contatos',
+              disabled: true,
+              href: 'contatos'
+            }
+          ]"
+          large
+        ></v-breadcrumbs>
+      </div>
       <v-dialog v-model="showDialog" max-width="600px">
         <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2" v-on="on">Novo contato</v-btn>
+          <v-btn color="primary" dark class="mb-2 ml-5 mt-2" v-on="on">Novo contato</v-btn>
         </template>
         <v-card>
           <v-card-title>
@@ -35,6 +48,11 @@
                     <v-text-field
                       v-model="form.telefoneCelular"
                       label="Telefone celular"
+                      :rules="[
+                        v =>
+                          v.match('\\b\\w{1,2}\\b') ||
+                          'Mínimo duas palavras de 3 letras cada'
+                      ]"
                       v-mask="'(##) #####-####'"
                     ></v-text-field>
                   </v-col>
@@ -71,10 +89,7 @@ export default {
       { text: "Telefone celular", value: "telefoneCelular" },
       { text: "Ações", value: "action" }
     ],
-    list: [],
-    rule: [
-      v => v.match("\\b\\w{1,2}\\b") || "Mínimo duas palavras de 3 letras cada"
-    ]
+    list: []
   }),
   firestore() {
     return {
@@ -95,10 +110,12 @@ export default {
           nome: form.nome,
           telefoneCelular: form.telefoneCelular
         })
-        .then(docRef => {
-          // eslint-disable-next-line no-console
-          console.log("ok", docRef);
-          this.showDialog = false;
+        .then(() => {
+          (this.form = {
+            nome: null,
+            telefoneCelular: null
+          }),
+            (this.showDialog = false);
         })
         .catch(error => {
           // eslint-disable-next-line no-console
