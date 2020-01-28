@@ -31,13 +31,11 @@
           large
         ></v-breadcrumbs>
       </div>
+      <v-btn color="primary" dark class="mb-2 ml-5 mt-2" @click="openDialog">Novo contato</v-btn>
       <v-dialog v-model="showDialog" max-width="600px">
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark class="mb-2 ml-5 mt-2" v-on="on">Novo contato</v-btn>
-        </template>
         <v-card>
           <v-card-title>
-            <span class="headline">Adicionar novo contato</span>
+            <span class="headline">{{ titleDialog }}</span>
           </v-card-title>
           <v-card-text>
             <v-container>
@@ -84,6 +82,7 @@ import db from "../../firebase";
 export default {
   data: () => ({
     showDialog: false,
+    titleDialog: null,
     form: {
       nome: null,
       telefoneCelular: null
@@ -101,6 +100,10 @@ export default {
     };
   },
   methods: {
+    openDialog() {
+      this.showDialog = true;
+      this.titleDialog = "Adicionar novo contato";
+    },
     getClass(item) {
       if (item && item.telefoneCelular) {
         const prefixo = item.telefoneCelular.substr(1, 2) === "11";
@@ -129,7 +132,25 @@ export default {
             this.$toast.error("Erro ao salvar", { position: "top-right" });
         });
     },
-    editItem() {},
+    editItem({ id }) {
+      const doc = db.collection("contacts").doc(id);
+      doc
+        .get()
+        .then(doc => {
+          this.titleDialog = "Editar contato";
+          this.showDialog = true;
+          const data = doc.exists && doc.data();
+          this.form = {
+            nome: data.nome,
+            telefoneCelular: data.telefoneCelular
+          };
+        })
+        .catch(error => {
+          this.showDialog = false;
+          this.$toast.error(error, { position: "top-right" }) ||
+            this.$toast.error("Erro", { position: "top-right" });
+        });
+    },
     deleteItem({ id }) {
       return db
         .collection("contacts")
