@@ -1,78 +1,12 @@
 <template>
-  <v-data-table
-    item-key="nome"
-    :loading="list.length"
-    loading-text="Carregando..."
-    height="430"
-    :headers="header"
-    :items="list"
-    class="elevation-1 ml-5 mr-5 mt-5"
-  >
-    <template v-slot:item="props">
-      <tr :class="getClass(props.item)">
-        <td>{{ props.item.nome }}</td>
-        <td>{{ props.item.telefoneCelular }}</td>
-        <td>
-          {{ props.item.action }}
-          <v-layout class="group">
-            <v-icon @click="editItem(props.item)">mdi-pencil-outline</v-icon>
-            <v-icon @click="deleteItem(props.item)">mdi-trash-can-outline</v-icon>
-          </v-layout>
-        </td>
-      </tr>
-    </template>
+  <v-data-table height="430" :headers="header" :items="list" class="elevation-1 ml-5 mr-5 mt-5">
     <template v-slot:top>
-      <div>
-        <v-breadcrumbs
-          :items="[
-            {
-              text: 'Dashboard',
-              disabled: false,
-              href: 'contatos'
-            },
-            {
-              text: 'Contatos',
-              disabled: true,
-              href: 'contatos'
-            }
-          ]"
-          large
-        ></v-breadcrumbs>
-      </div>
+      <breadcrumbs :items="itemsBreadcrumbs"></breadcrumbs>
       <v-btn dark class="mb-2 ml-5 mt-2 primary" @click="openDialog">Novo contato</v-btn>
-      <v-dialog v-model="showDialog" max-width="600px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ titleDialog }}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <form>
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="form.nome"
-                      label="Nome completo"
-                      validate-on-blur
-                      required
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="form.telefoneCelular"
-                      label="Telefone celular"
-                      v-mask="'(##) #####-####'"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </form>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="showDialog = false">Cancelar</v-btn>
-            <v-btn color="blue darken-1" text @click="save(form)">Salvar e fechar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <Dialog :show-dialog="showDialog" @close="showDialog = false" @save="save"></Dialog>
+    </template>
+    <template v-slot:item="props">
+      <data-table-body :item="props.item"></data-table-body>
     </template>
     <template v-slot:no-data>
       <span>nenhum registro encontrado</span>
@@ -81,16 +15,32 @@
 </template>
 
 <script>
+import Breadcrumbs from "../../components/breadcrumbs";
+import DataTableBody from "./data-table-body";
+import Dialog from "./dialog";
 import db from "../../firebase";
 
 export default {
+  components: {
+    Breadcrumbs,
+    DataTableBody,
+    Dialog
+  },
   data: () => ({
     showDialog: false,
     titleDialog: null,
-    form: {
-      nome: null,
-      telefoneCelular: null
-    },
+    itemsBreadcrumbs: [
+      {
+        text: "Dashboard",
+        disabled: false,
+        href: "contatos"
+      },
+      {
+        text: "Contatos",
+        disabled: true,
+        href: "contatos"
+      }
+    ],
     header: [
       { text: "Nome completo", value: "nome" },
       { text: "Telefone celular", value: "telefoneCelular" },
