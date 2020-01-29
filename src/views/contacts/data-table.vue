@@ -13,7 +13,6 @@
     </template>
   </v-data-table>
 </template>
-
 <script>
 import Breadcrumbs from "../../components/breadcrumbs";
 import DataTableBody from "./data-table-body";
