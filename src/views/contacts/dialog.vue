@@ -29,6 +29,8 @@
   </v-dialog>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
     showDialog: {
@@ -36,12 +38,8 @@ export default {
       default: false
     }
   },
-  data: () => ({
-    titleDialog: null,
-    form: {
-      nome: null,
-      telefoneCelular: null
-    }
-  })
+  computed: {
+    ...mapGetters(["titleDialog", "form"])
+  }
 };
 </script>

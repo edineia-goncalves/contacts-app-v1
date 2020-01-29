@@ -1,5 +1,10 @@
 <template>
-  <v-data-table height="430" :headers="header" :items="list" class="elevation-1 ml-5 mr-5 mt-5">
+  <v-data-table
+    height="430"
+    :headers="tableHeader"
+    :items="getData"
+    class="elevation-1 ml-5 mr-5 mt-5"
+  >
     <template v-slot:top>
       <breadcrumbs :items="itemsBreadcrumbs"></breadcrumbs>
       <v-btn dark class="mb-2 ml-5 mt-2 primary" @click="openDialog">Novo contato</v-btn>
@@ -18,6 +23,7 @@ import Breadcrumbs from "../../components/breadcrumbs";
 import DataTableBody from "./data-table-body";
 import Dialog from "./dialog";
 import db from "../../firebase";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -25,43 +31,22 @@ export default {
     DataTableBody,
     Dialog
   },
+  computed: {
+    ...mapGetters(["itemsBreadcrumbs", "tableHeader"])
+  },
   data: () => ({
     showDialog: false,
-    titleDialog: null,
-    itemsBreadcrumbs: [
-      {
-        text: "Dashboard",
-        disabled: false,
-        href: "contatos"
-      },
-      {
-        text: "Contatos",
-        disabled: true,
-        href: "contatos"
-      }
-    ],
-    header: [
-      { text: "Nome completo", value: "nome" },
-      { text: "Telefone celular", value: "telefoneCelular" },
-      { text: "Ações", value: "action" }
-    ],
-    list: []
+    getData: []
   }),
   firestore() {
     return {
-      list: db.collection("contacts").orderBy("nome")
+      getData: db.collection("contacts").orderBy("nome")
     };
   },
   methods: {
     openDialog() {
       this.showDialog = true;
       this.titleDialog = "Adicionar novo contato";
-    },
-    getClass(item) {
-      if (item && item.telefoneCelular) {
-        const prefixo = item.telefoneCelular.substr(1, 2) === "11";
-        return { "light-blue lighten-4": prefixo };
-      }
     },
     updateItem(form) {
       return db
