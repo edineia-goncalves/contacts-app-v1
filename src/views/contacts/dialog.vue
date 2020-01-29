@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog" max-width="600px">
+  <v-dialog v-model="showDialog" max-width="600px" persistent>
     <v-card>
       <v-card-title>
         <span class="headline">{{ titleDialog }}</span>
