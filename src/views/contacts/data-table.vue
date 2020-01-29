@@ -53,11 +53,8 @@
                     <v-text-field
                       v-model="form.nome"
                       label="Nome completo"
-                      :rules="[
-                        v =>
-                          v.match('\\b\\w{1,2}\\b') ||
-                          'Mínimo duas palavras de 3 letras cada'
-                      ]"
+                      :rules="ruleNome"
+                      validate-on-blur
                       required
                     ></v-text-field>
                     <v-text-field
@@ -100,7 +97,18 @@ export default {
       { text: "Telefone celular", value: "telefoneCelular" },
       { text: "Ações", value: "action" }
     ],
-    list: []
+    list: [],
+    ruleNome: [
+      v => {
+        if (v === null) {
+          return "Campo obrigatório";
+        }
+        if (v.split(" ").find(e => e.length < 3) === undefined) {
+          return "Mínimo de duas palavras contendo 3 letras cada";
+        }
+        return true;
+      }
+    ]
   }),
   firestore() {
     return {
@@ -108,6 +116,7 @@ export default {
     };
   },
   methods: {
+    validator() {},
     openDialog() {
       this.showDialog = true;
       this.titleDialog = "Adicionar novo contato";
@@ -118,27 +127,17 @@ export default {
         return { "light-blue lighten-4": prefixo };
       }
     },
-    save(form) {
+    updateItem(form) {
       return db
-        .collection("contacts")
-        .add({
-          nome: form.nome,
-          telefoneCelular: form.telefoneCelular
-        })
+        .collection("users")
+        .doc(form.id)
+        .update({ nome: form.nome, telefoneCelular: form.telefoneCelular })
         .then(() => {
           this.showDialog = false;
-          this.$toast.success("Salvo com sucesso!", {
-            position: "top-right"
-          });
-          this.form = {
-            nome: null,
-            telefoneCelular: null
-          };
-        })
-        .catch(error => {
-          this.$toast.error(error, { position: "top-right" }) ||
-            this.$toast.error("Erro ao salvar", { position: "top-right" });
         });
+    },
+    save() {
+      this.$refs.form.validate();
     },
     editItem({ id }) {
       const doc = db.collection("contacts").doc(id);
