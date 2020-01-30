@@ -1,11 +1,11 @@
 import db from "../firebase";
 
 const firebaseService = {
-    addItem(value) {
+    addItem(item) {
         return db.collection("contacts")
             .add({
-                nome: value.nome,
-                telefoneCelular: value.telefoneCelular
+                nome: item.nome,
+                telefoneCelular: item.telefoneCelular
             })
     },
     deleteItem(id) {
@@ -14,9 +14,12 @@ const firebaseService = {
             .doc(id)
             .delete()
     },
-    editItem(id) {
+    getItemById(id) {
         const doc = db.collection("contacts").doc(id);
         return doc.get()
+    },
+    updateItem(id, item) {
+        return db.collection("contacts").doc(id).update(item);
     }
 };
 

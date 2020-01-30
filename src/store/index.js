@@ -27,14 +27,16 @@ export default new Vuex.Store({
       { text: "Telefone celular", value: "telefoneCelular" },
       { text: "Ações", value: "action" }
     ],
-    showDialog: false
+    showDialog: false,
+    idDocumentUpdate: null
   },
   getters: {
     itemsBreadcrumbs: state => state.itemsBreadcrumbs,
     tableHeader: state => state.tableHeader,
     titleDialog: state => state.titleDialog,
     form: state => state.form,
-    showDialog: state => state.showDialog
+    showDialog: state => state.showDialog,
+    idDocumentUpdate: state => state.idDocumentUpdate
   },
   mutations: {
     clearForm(state) {
@@ -52,6 +54,9 @@ export default new Vuex.Store({
     setTitleDialog(state, value) {
       state.titleDialog = value;
     },
+    setIdDocumentUpdate(state, value) {
+      state.idDocumentUpdate = value;
+    },
   },
   actions: {
     clearForm({ commit }) {
@@ -65,6 +70,9 @@ export default new Vuex.Store({
     },
     setTitleDialog({ commit }) {
       commit("setTitleDialog");
+    },
+    setIdDocumentUpdate({ commit }) {
+      commit("setIdDocumentUpdate");
     },
   },
   modules: {}

@@ -33,7 +33,13 @@ export default {
     Dialog
   },
   computed: {
-    ...mapGetters(["itemsBreadcrumbs", "tableHeader", "showDialog", "form"])
+    ...mapGetters([
+      "itemsBreadcrumbs",
+      "tableHeader",
+      "showDialog",
+      "form",
+      "idDocumentUpdate"
+    ])
   },
   data: () => ({
     getData: []
@@ -51,19 +57,36 @@ export default {
       this.openDialog(true);
     },
     save() {
-      firebaseService
-        .addItem(this.form)
-        .then(() => {
-          this.openDialog(false);
-          this.$toast.success("Salvo com sucesso!", {
-            position: "top-right"
+      if (this.idDocumentUpdate) {
+        firebaseService
+          .updateItem(this.idDocumentUpdate, this.form)
+          .then(() => {
+            this.openDialog(false);
+            this.$toast.success("Editado com sucesso!", {
+              position: "top-right"
+            });
+            this.clearForm();
+          })
+          .catch(error => {
+            this.$toast.error(error, { position: "top-right" }) ||
+              this.$toast.error("Erro ao editar", { position: "top-right" });
           });
-          this.clearForm();
-        })
-        .catch(error => {
-          this.$toast.error(error, { position: "top-right" }) ||
-            this.$toast.error("Erro ao salvar", { position: "top-right" });
-        });
+      }
+      if (!this.idDocumentUpdate) {
+        firebaseService
+          .addItem(this.form)
+          .then(() => {
+            this.openDialog(false);
+            this.$toast.success("Salvo com sucesso!", {
+              position: "top-right"
+            });
+            this.clearForm();
+          })
+          .catch(error => {
+            this.$toast.error(error, { position: "top-right" }) ||
+              this.$toast.error("Erro ao salvar", { position: "top-right" });
+          });
+      }
     }
   }
 };

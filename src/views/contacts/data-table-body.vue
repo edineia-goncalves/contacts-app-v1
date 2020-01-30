@@ -5,7 +5,7 @@
     <td>
       {{ item.action }}
       <v-layout class="group">
-        <v-icon @click="editItem(item.id)">mdi-pencil-outline</v-icon>
+        <v-icon @click="getItemById(item.id)">mdi-pencil-outline</v-icon>
         <v-icon @click="deleteItem(item.id)">mdi-trash-can-outline</v-icon>
       </v-layout>
     </td>
@@ -20,7 +20,12 @@ export default {
     item: Object
   },
   methods: {
-    ...mapMutations(["openDialog", "setForm", "setTitleDialog"]),
+    ...mapMutations([
+      "openDialog",
+      "setForm",
+      "setTitleDialog",
+      "setIdDocumentUpdate"
+    ]),
     deleteItem(id) {
       firebaseService
         .deleteItem(id)
@@ -34,12 +39,13 @@ export default {
             this.$toast.error("Erro ao excluir", { position: "top-right" });
         });
     },
-    editItem(id) {
+    getItemById(id) {
       firebaseService
-        .editItem(id)
+        .getItemById(id)
         .then(doc => {
           const data = doc.exists && doc.data();
           if (data) {
+            this.setIdDocumentUpdate(id);
             this.setTitleDialog("Editar contato");
             this.openDialog(true);
             this.setForm(data);
