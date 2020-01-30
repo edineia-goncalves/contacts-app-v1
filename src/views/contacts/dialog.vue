@@ -9,7 +9,7 @@
           <form>
             <v-row>
               <v-col cols="12">
-                <v-text-field v-model="form.nome" label="Nome completo" required :color="color"></v-text-field>
+                <v-text-field v-model="form.nome" label="Nome completo" :error="this.showError"></v-text-field>
                 <span
                   class="red--text"
                   v-if="showError"
@@ -47,10 +47,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["titleDialog", "form"]),
-    color() {
-      return this.showError ? "red" : "primary";
-    }
+    ...mapGetters(["titleDialog", "form"])
   }
 };
 </script>
