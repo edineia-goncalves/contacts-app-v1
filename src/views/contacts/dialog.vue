@@ -14,7 +14,6 @@
                   class="red--text"
                   v-if="showError"
                 >Mínimo de duas palavras contendo 3 letras cada</span>
-                <br />
                 <v-text-field
                   v-model="form.telefoneCelular"
                   label="Telefone celular"
