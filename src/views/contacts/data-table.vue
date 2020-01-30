@@ -64,9 +64,11 @@ export default {
       this.showError = false;
     },
     save() {
-      this.showError = this.form.nome.split(" ").find(e => e.length < 3)
-        ? true
-        : false;
+      this.showError =
+        this.form.nome.split(" ").length < 2 ||
+        this.form.nome.split(" ").find(e => e.length < 3)
+          ? true
+          : false;
 
       if (this.idDocumentUpdate && !this.showError) {
         firebaseService
