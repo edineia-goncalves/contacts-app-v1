@@ -7,8 +7,8 @@
   >
     <template v-slot:top>
       <breadcrumbs :items="itemsBreadcrumbs"></breadcrumbs>
-      <v-btn dark class="mb-2 ml-5 mt-2 primary" @click="openDialog">Novo contato</v-btn>
-      <Dialog :show-dialog="showDialog" @close="showDialog = false" @save="save"></Dialog>
+      <v-btn dark class="mb-2 ml-5 mt-2 primary" @click="open">Novo contato</v-btn>
+      <Dialog :show-dialog="showDialog" @close="openDialog(false)" @save="save()"></Dialog>
     </template>
     <template v-slot:item="props">
       <data-table-body :item="props.item"></data-table-body>
@@ -23,7 +23,8 @@ import Breadcrumbs from "../../components/breadcrumbs";
 import DataTableBody from "./data-table-body";
 import Dialog from "./dialog";
 import db from "../../firebase";
-import { mapGetters } from "vuex";
+import firebaseService from "../../services/contacts";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
@@ -32,10 +33,9 @@ export default {
     Dialog
   },
   computed: {
-    ...mapGetters(["itemsBreadcrumbs", "tableHeader"])
+    ...mapGetters(["itemsBreadcrumbs", "tableHeader", "showDialog", "form"])
   },
   data: () => ({
-    showDialog: false,
     getData: []
   }),
   firestore() {
@@ -44,75 +44,25 @@ export default {
     };
   },
   methods: {
-    openDialog() {
-      this.showDialog = true;
-      this.titleDialog = "Adicionar novo contato";
+    ...mapMutations(["clearForm", "openDialog", "setTitleDialog"]),
+    open() {
+      this.clearForm();
+      this.setTitleDialog("Adicionar novo contato");
+      this.openDialog(true);
     },
-    updateItem(form) {
-      return db
-        .collection("users")
-        .doc(form.id)
-        .update({ nome: form.nome, telefoneCelular: form.telefoneCelular })
+    save() {
+      firebaseService
+        .addItem(this.form)
         .then(() => {
-          this.showDialog = false;
-        });
-    },
-    save(form) {
-      return db
-        .collection("contacts")
-        .add({
-          nome: form.nome,
-          telefoneCelular: form.telefoneCelular
-        })
-        .then(() => {
-          this.showDialog = false;
+          this.openDialog(false);
           this.$toast.success("Salvo com sucesso!", {
             position: "top-right"
           });
-          this.form = {
-            nome: null,
-            telefoneCelular: null
-          };
+          this.clearForm();
         })
         .catch(error => {
           this.$toast.error(error, { position: "top-right" }) ||
             this.$toast.error("Erro ao salvar", { position: "top-right" });
-        });
-    },
-    editItem({ id }) {
-      const doc = db.collection("contacts").doc(id);
-      doc
-        .get()
-        .then(doc => {
-          this.titleDialog = "Editar contato";
-          this.showDialog = true;
-          const data = doc.exists && doc.data();
-          if (data) {
-            this.form = {
-              nome: data.nome,
-              telefoneCelular: data.telefoneCelular
-            };
-          }
-        })
-        .catch(error => {
-          this.showDialog = false;
-          this.$toast.error(error, { position: "top-right" }) ||
-            this.$toast.error("Erro", { position: "top-right" });
-        });
-    },
-    deleteItem({ id }) {
-      return db
-        .collection("contacts")
-        .doc(id)
-        .delete()
-        .then(() => {
-          this.$toast.success("Excluído com sucesso!", {
-            position: "top-right"
-          });
-        })
-        .catch(error => {
-          this.$toast.error(error, { position: "top-right" }) ||
-            this.$toast.error("Erro ao excluir", { position: "top-right" });
         });
     }
   }

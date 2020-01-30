@@ -9,7 +9,7 @@ export default new Vuex.Store({
       nome: null,
       telefoneCelular: null
     },
-    titleDialog: 'Adicionar novo contato',
+    titleDialog: "Adicionar novo contato",
     itemsBreadcrumbs: [
       {
         text: "Dashboard",
@@ -27,14 +27,45 @@ export default new Vuex.Store({
       { text: "Telefone celular", value: "telefoneCelular" },
       { text: "Ações", value: "action" }
     ],
+    showDialog: false
   },
   getters: {
     itemsBreadcrumbs: state => state.itemsBreadcrumbs,
     tableHeader: state => state.tableHeader,
     titleDialog: state => state.titleDialog,
     form: state => state.form,
+    showDialog: state => state.showDialog
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    clearForm(state) {
+      state.form = {
+        nome: null,
+        telefoneCelular: null
+      };
+    },
+    openDialog(state, value) {
+      state.showDialog = value;
+    },
+    setForm(state, value) {
+      state.form = value;
+    },
+    setTitleDialog(state, value) {
+      state.titleDialog = value;
+    },
+  },
+  actions: {
+    clearForm({ commit }) {
+      commit("clearForm");
+    },
+    openDialog({ commit }) {
+      commit("openDialog");
+    },
+    setForm({ commit }) {
+      commit("setForm");
+    },
+    setTitleDialog({ commit }) {
+      commit("setTitleDialog");
+    },
+  },
   modules: {}
 });
