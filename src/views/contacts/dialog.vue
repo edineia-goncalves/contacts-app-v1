@@ -9,7 +9,12 @@
           <form>
             <v-row>
               <v-col cols="12">
-                <v-text-field v-model="form.nome" label="Nome completo" validate-on-blur required></v-text-field>
+                <v-text-field v-model="form.nome" label="Nome completo" required></v-text-field>
+                <span
+                  class="red--text"
+                  v-if="showError"
+                >Mínimo de duas palavras contendo 3 letras cada</span>
+                <br />
                 <v-text-field
                   v-model="form.telefoneCelular"
                   label="Telefone celular"
@@ -34,6 +39,10 @@ import { mapGetters } from "vuex";
 export default {
   props: {
     showDialog: {
+      type: Boolean,
+      default: false
+    },
+    showError: {
       type: Boolean,
       default: false
     }

@@ -8,7 +8,12 @@
     <template v-slot:top>
       <breadcrumbs :items="itemsBreadcrumbs"></breadcrumbs>
       <v-btn dark class="mb-2 ml-5 mt-2 primary" @click="open">Novo contato</v-btn>
-      <Dialog :show-dialog="showDialog" @close="openDialog(false)" @save="save()"></Dialog>
+      <Dialog
+        :show-dialog="showDialog"
+        @close="openDialog(false)"
+        @save="save"
+        :show-error="showError"
+      ></Dialog>
     </template>
     <template v-slot:item="props">
       <data-table-body :item="props.item"></data-table-body>
@@ -42,7 +47,8 @@ export default {
     ])
   },
   data: () => ({
-    getData: []
+    getData: [],
+    showError: false
   }),
   firestore() {
     return {
@@ -55,9 +61,14 @@ export default {
       this.clearForm();
       this.setTitleDialog("Adicionar novo contato");
       this.openDialog(true);
+      this.showError = false;
     },
     save() {
-      if (this.idDocumentUpdate) {
+      this.showError = this.form.nome.split(" ").find(e => e.length < 3)
+        ? true
+        : false;
+
+      if (this.idDocumentUpdate && !this.showError) {
         firebaseService
           .updateItem(this.idDocumentUpdate, this.form)
           .then(() => {
@@ -72,7 +83,7 @@ export default {
               this.$toast.error("Erro ao editar", { position: "top-right" });
           });
       }
-      if (!this.idDocumentUpdate) {
+      if (!this.idDocumentUpdate && !this.showError) {
         firebaseService
           .addItem(this.form)
           .then(() => {
