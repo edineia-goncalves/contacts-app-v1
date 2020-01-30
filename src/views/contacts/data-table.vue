@@ -65,7 +65,7 @@ export default {
     },
     save() {
       this.showError =
-        this.form.nome.split(" ").length < 2 ||
+        this.form.nome.trim().split(" ").length < 2 ||
         this.form.nome.split(" ").find(e => e.length < 3)
           ? true
           : false;
